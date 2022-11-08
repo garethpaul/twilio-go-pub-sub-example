@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -52,6 +53,7 @@ func processMessage(c *gin.Context) {
 	}
 
 	client := twilio.NewRestClient()
+	// add custom user agent
 	// See https://github.com/twilio/twilio-go/blob/main/rest/api/v2010/accounts_messages.go
 	params := &twilioApi.CreateMessageParams{}
 	params.SetFrom(os.Getenv("TWILIO_FROM_NUMBER"))
@@ -112,4 +114,20 @@ func processMessage(c *gin.Context) {
 		c.JSON(http.StatusOK, "ordinary")
 		return
 	}
+}
+
+type MyExcellentClient struct {
+	twilioClient.Client
+}
+
+func (c *MyExcellentClient) SendRequest(method string, rawURL string, data url.Values, headers map[string]interface{}) (*http.Response, error) {
+	/* 
+		Do something with the request before sending it
+		// https://github.com/twilio/twilio-go#using-a-custom-client
+	*/
+	// Custom code to pre-process request here
+	resp, err := c.Client.SendRequest(method, rawURL, data, headers)
+	// Custom code to pre-process response here
+	fmt.Println(resp.StatusCode)
+	return resp, err
 }
