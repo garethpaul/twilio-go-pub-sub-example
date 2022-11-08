@@ -52,14 +52,20 @@ func processMessage(c *gin.Context) {
 	}
 
 	client := twilio.NewRestClient()
+	// See https://github.com/twilio/twilio-go/blob/main/rest/api/v2010/accounts_messages.go
 	params := &twilioApi.CreateMessageParams{}
 	params.SetFrom(os.Getenv("TWILIO_FROM_NUMBER"))
+	// MILLIONS OF MESSAGES?? 
 	// Lots of Messages Recommend Using a Messaging Service
 	// See https://www.twilio.com/docs/messaging/services for details
-	// params.SetMessagingServiceSid("MG9752274e9e519418a7406176694466fa")
+	//params.SetMessagingServiceSid(os.GetEnv("TWILIO_SUBSCRIPTION_SID"))
+	//params.ScheduleType("fixed")
+	//params.SendAt(time.Now().UTC().Format("2022-12-25T00:04:05-0700"))
+	//params.MaxPrice(float32(0.05))
 	params.SetTo(content.To)
 	params.SetBody(content.Message)
 
+	// TOO MANY REQUESTS ??
 	// Add Exponential Backoff to retry sending the message twice if there is a failure
 	// See https://www.twilio.com/docs/api/errors for details
 	// See https://pkg.go.dev/github.com/cenkalti/backoff/v4#section-readme
@@ -71,6 +77,9 @@ func processMessage(c *gin.Context) {
 		// if the error.code is 21610, retry
 		// TODO: FIX THIS
 		if err != nil {
+			// Error Parsing
+			// TwilioRestError provides information about an unsuccessful request.
+			// https://pkg.go.dev/github.com/twilio/twilio-go/client#TwilioRestError
 			twilioError := err.(*twilioClient.TwilioRestError)
 			if twilioError.Code == 21610 {
 				retries--
