@@ -40,31 +40,31 @@ func generateMessages(c *gin.Context) {
 
 	t := client.Topic(topic)
 
-		//Skipping error handling here :-))
-		var content MessageContent
-		// get the message content from the request
-		if err := c.ShouldBindJSON(&content); err != nil {
-			c.JSON(http.StatusInternalServerError, err.Error())
+	//Skipping error handling here :-))
+	var content MessageContent
+	// get the message content from the request
+	if err := c.ShouldBindJSON(&content); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	msgJson, _ := json.Marshal(content)
+
+	result := t.Publish(c, &pubsub.Message{
+		Data: msgJson,
+	})
+
+	wg.Add(1)
+
+	go func(res *pubsub.PublishResult) {
+		defer wg.Done()
+
+		_, err := res.Get(c)
+		if err != nil {
+			fmt.Fprintf(os.Stdout, "Failed to publish: %v", err)
 			return
 		}
-
-		msgJson, _ := json.Marshal(content)
-
-		result := t.Publish(c, &pubsub.Message{
-			Data: msgJson,
-		})
-
-		wg.Add(1)
-
-		go func(res *pubsub.PublishResult) {
-			defer wg.Done()
-
-			_, err := res.Get(c)
-			if err != nil {
-				fmt.Fprintf(os.Stdout, "Failed to publish: %v", err)
-				return
-			}
-		}(result)
+	}(result)
 	
 	wg.Wait()
 

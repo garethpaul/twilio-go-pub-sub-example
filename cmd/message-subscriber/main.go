@@ -55,7 +55,7 @@ func processMessage(c *gin.Context) {
 	params.SetFrom(os.Getenv("TWILIO_FROM_NUMBER"))
 	// Lots of Messages Recommend Using a Messaging Service
 	// See https://www.twilio.com/docs/messaging/services for details
-	// params.SetMessagingServiceSid("MG9752274e9e519418a7406176694466fa")
+	//params.SetMessagingServiceSid(os.GetEnv("TWILIO_SUBSCRIPTION_SID"))
 	params.SetTo(content.To)
 	params.SetBody(content.Message)
 
