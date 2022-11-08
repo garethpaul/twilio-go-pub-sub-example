@@ -19,12 +19,12 @@ type MessageContent struct {
 func main() {
 	r := gin.Default()
 
-	r.POST("/generate-messages", generateMessages)
+	r.POST("/new-review", publishReview)
 
 	r.Run()
 }
 
-func generateMessages(c *gin.Context) {
+func publishReview(c *gin.Context) {
 	var wg sync.WaitGroup
 
 	projectId := os.Getenv("PROJECT_ID")
