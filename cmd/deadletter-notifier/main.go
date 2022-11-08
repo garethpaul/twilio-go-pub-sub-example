@@ -13,9 +13,8 @@ import (
 )
 
 type MessageContent struct {
-	MediaLink string `json:"mediaLink"`
-	Name      string `json:"name"`
-	Bucket    string `json:"bucket"`
+	To      string `json:"name"`
+	Message string `json:"bucket"`
 }
 
 type PubSubMessage struct {
@@ -48,12 +47,13 @@ func processGsNotification(c *gin.Context) {
 	}
 
 	// Sendgrid Go Send Email
-	from := mail.NewEmail("Example User", "test@example.com")
-	subject := "Sending with Twilio SendGrid is Fun"
-	to := mail.NewEmail("Example User", "test@example.com")
-	plainTextContent := "and easy to do anywhere, even with Go"
-	htmlContent := content.MediaLink //"<strong>and easy to do anywhere, even with Go</strong>"
-	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+	from := mail.NewEmail("PubSub Deadletter", "test@twilio.com")
+	subject := "PubSub Deadletter Notifier"
+	to := mail.NewEmail("DevTools", "test@twilio.com")
+	// plainTextContent WITH CONTENT
+	msgContent:= fmt.Sprintf("PubSub Deadletter Notifier: %s, %s", content.To, content.Message)
+	htmlContent := fmt.Sprintf("<strong>%s</strong>", msgContent)
+	message := mail.NewSingleEmail(from, subject, to, msgContent, htmlContent)
 	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
 	response, err := client.Send(message)
 	if err != nil {
