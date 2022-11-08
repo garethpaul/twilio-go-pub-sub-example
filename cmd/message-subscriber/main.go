@@ -56,7 +56,10 @@ func processMessage(c *gin.Context) {
 	// MILLIONS OF MESSAGES?? 
 	// Lots of Messages Recommend Using a Messaging Service
 	// See https://www.twilio.com/docs/messaging/services for details
+	// See https://github.com/twilio/twilio-go/blob/main/rest/api/v2010/accounts_messages.go
 	//params.SetMessagingServiceSid(os.GetEnv("TWILIO_SUBSCRIPTION_SID"))
+	//params.ScheduleType("fixed")
+	//params.SendAt(time.Now().UTC().Format("2022-12-25T00:04:05-0700"))
 	params.SetTo(content.To)
 	params.SetBody(content.Message)
 
