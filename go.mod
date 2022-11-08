@@ -33,6 +33,8 @@ require (
 	github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
+	github.com/segmentio/analytics-go/v3 v3.2.1 // indirect
+	github.com/segmentio/backo-go v1.0.0 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
 	github.com/sendgrid/sendgrid-go v3.12.0+incompatible // indirect
 	github.com/twilio/twilio-go v1.1.1 // indirect
