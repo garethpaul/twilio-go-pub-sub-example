@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	analytics "github.com/segmentio/analytics-go/v3"
 	"github.com/twilio/twilio-go"
 	twilioClient "github.com/twilio/twilio-go/client"
 	twilioApi "github.com/twilio/twilio-go/rest/api/v2010"
@@ -81,6 +82,19 @@ func processMessage(c *gin.Context) {
 		if err == nil {
 			// print out the response from resp
 			fmt.Println(resp)
+			// Log the user in Segment
+			// See https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/#identify
+			// for details on how to log the user in Segment
+			client := analytics.New(os.Getenv("SEGMENT_WRITE_KEY"))
+			defer client.Close()
+
+			client.Enqueue(analytics.Track{
+				UserId: content.To,
+				Event:  "Message Sent",
+				Properties: analytics.NewProperties().
+					Set("to", content.To).
+					Set("message", content.Message),
+			})
 			break
 		}
 	}
