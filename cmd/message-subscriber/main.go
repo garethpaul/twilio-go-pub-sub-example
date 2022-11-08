@@ -53,12 +53,14 @@ func processMessage(c *gin.Context) {
 	client := twilio.NewRestClient()
 	params := &twilioApi.CreateMessageParams{}
 	params.SetFrom(os.Getenv("TWILIO_FROM_NUMBER"))
+	// MILLIONS OF MESSAGES?? 
 	// Lots of Messages Recommend Using a Messaging Service
 	// See https://www.twilio.com/docs/messaging/services for details
 	//params.SetMessagingServiceSid(os.GetEnv("TWILIO_SUBSCRIPTION_SID"))
 	params.SetTo(content.To)
 	params.SetBody(content.Message)
 
+	// TOO MANY REQUESTS ??
 	// Add Exponential Backoff to retry sending the message twice if there is a failure
 	// See https://www.twilio.com/docs/api/errors for details
 	// See https://pkg.go.dev/github.com/cenkalti/backoff/v4#section-readme
@@ -70,6 +72,9 @@ func processMessage(c *gin.Context) {
 		// if the error.code is 21610, retry
 		// TODO: FIX THIS
 		if err != nil {
+			// Error Parsing
+			// TwilioRestError provides information about an unsuccessful request.
+			// https://pkg.go.dev/github.com/twilio/twilio-go/client#TwilioRestError
 			twilioError := err.(*twilioClient.TwilioRestError)
 			if twilioError.Code == 21610 {
 				retries--
