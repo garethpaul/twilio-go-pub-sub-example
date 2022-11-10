@@ -1,3 +1,4 @@
 [submodule "cmd/publisher-app"]
 	path = cmd/publisher-app
 	url = https://github.com/twilio-labs/sample-twilio-go.git
+	branch = pub-sub-example
